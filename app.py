@@ -7,10 +7,15 @@ app = Flask(__name__)
 
 # Initialize the model (example with a sentiment analysis model)
 model_name = "savasy/bert-base-turkish-sentiment-cased"  # Replace with your chosen model
-nlp = pipeline("sentiment-analysis", model=model_name, tokenizer=model_name)
+nlp = None
 
 class NewsItem(BaseModel):
     content: str
+
+@app.before_first_request
+def load_model():
+    global nlp
+    nlp = pipeline("sentiment-analysis", model=model_name, tokenizer=model_name)
 
 @app.route('/analyze-news/', methods=['POST'])
 def analyze_news():
